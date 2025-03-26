@@ -19,12 +19,12 @@ app.use(express.json());
 // Serving client app (public folder after running build command)
 app.use(express.static(path.join(__dirname, '..', 'public')))
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'))
-})
-
 // Routes
 app.use(planetsRouter);
 app.use(launchesRouter);
+
+app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'))
+})
 
 module.exports = app;
