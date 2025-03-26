@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path')
+const path = require('path');
+const morgan = require('morgan');
 
 const planetsRouter = require('./routes/planets/planets.router')
 
@@ -11,6 +12,7 @@ app.use(cors({
     origin : 'http://localhost:3000' // This will only add this one origin to the whitelist
 }));
 
+app.use(morgan('combined'));
 app.use(express.json());
 
 // Serving client app (public folder after running build command)
