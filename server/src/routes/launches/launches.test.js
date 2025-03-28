@@ -2,10 +2,13 @@ const request = require('supertest');
 const app = require('../../app');
 
 describe('Test GET /launches', () => { // Test fixture
-    test('It should respond with 200 success', () => { // Test case
-        const response = request(app);
+    test('It should respond with 200 success', async () => { // Test case
+        await request(app)
+            .get('/launches')
+            .expect('Content-Type', /json/)
+            .expect(200)
 
-        expect(response).toBe(200) // assertion
+        // expect(response.statusCode).toBe(200) // assertion
     })
 })
 
