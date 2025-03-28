@@ -13,8 +13,31 @@ describe('Test GET /launches', () => { // Test fixture
 })
 
 describe('Test POST /launches', () => {
-    test('It should respond with 200 success', () => {
+    const completeLaunchData = {
+        mission : 'Test mission1',
+        rocket : 'Test rocket1',
+        target : 'Test target1',
+        launchDate : 'January 4, 2028'
+    }
 
+    const launchDataWithoutDate = {
+        mission : 'Test mission1',
+        rocket : 'Test rocket1',
+        target : 'Test target1'
+    }
+    
+    test('It should respond with 201 created', async () => {
+        const response = await request(app)
+            .post('/launches')
+            .send(completeLaunchData)
+            .expect('Content-Type', /json/)
+            .expect(201)
+
+        const requestDate = new Date(completeLaunchData.launchDate).valueOf();
+        const responseDate = new Date(response.body.launchDate).valueOf();
+
+        expect(responseDate).toBe(requestDate)
+        expect(response.body).toMatchObject(launchDataWithoutDate)
     })
 
     test('It should catch missing required properties', () => {
