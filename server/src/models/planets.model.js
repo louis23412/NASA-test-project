@@ -1,8 +1,8 @@
 const { parse } = require('csv-parse');
 const fs = require('fs');
-const path = require('path')
+const path = require('path');
 
-const habitablePlanets = [];
+const planets = require('./planets.mongo');
 
 function isHabitablePlanet(planet) {
     return planet['koi_disposition'] === 'CONFIRMED' 
@@ -18,9 +18,9 @@ function loadPlanetsData() {
             columns : true
         }))
     
-        .on('data', (data) => {
+        .on('data', async (data) => {
             if (isHabitablePlanet(data)) {
-                habitablePlanets.push(data)
+                savePlanet(data)
             }
         })
     
@@ -29,15 +29,33 @@ function loadPlanetsData() {
             reject(err);
         })
     
-        .on('end', () => {
-            console.log(`${habitablePlanets.length} habitable planets found!`)
+        .on('end', async () => {
+            const countPlanetsFound = (await getAllPlanets()).length
+            console.log(`${countPlanetsFound} habitable planets found!`)
             resolve();
         })
     })
 }
 
-function getAllPlanets() {
-    return habitablePlanets
+async function getAllPlanets() {
+    return await planets.find({})
+}
+
+async function savePlanet(planet) {
+    try {
+        // insert + update = upsert
+
+        // Save planet to mongoDB database (Only add planet if it does not exist)
+        await planets.updateOne({
+            keplerName : planet.kepler_name // Find planets with the current kepler_name
+        }, {
+            keplerName : planet.kepler_name // If it doesnt exist we insert this. If it does exist we just update the document with this 
+        }, {
+            upsert : true // We need to set this to true or the update function will only update
+        })
+    } catch (err) {
+        console.err(`Could not save planet ${err}`)
+    }
 }
 
 module.exports = {
