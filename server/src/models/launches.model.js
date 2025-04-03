@@ -1,6 +1,4 @@
-// const launches = reuire('./launches.mongo')
-
-const launches = new Map();
+const launchesDatabase = require('./launches.mongo');
 
 let latestFlightNumber = 100
 
@@ -15,14 +13,26 @@ const launch = {
     success : true
 }
 
-launches.set(launch.flightNumber, launch)
+saveLaunch(launch);
 
 function existsLaunchWithId(launchId) {
     return launches.has(launchId)
 }
 
-function getAllLaunches() {
-    return Array.from(launches.values())
+async function getAllLaunches() {
+    return await launchesDatabase.find({}, {
+        _id : 0,
+        __v : 0
+    })
+}
+
+async function saveLaunch(launch) {
+    await launchesDatabase.updateOne({
+        flightNumber : launch.flightNumber // We find if the data already exists in the database by flightNumber
+    },
+    launch, /* We insert the launch object */ {
+        upsert : true // We have to set upsert to true, or the function will only update
+    })
 }
 
 function addNewLaunch(launch) {
