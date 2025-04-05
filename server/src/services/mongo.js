@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 
-const MONGO_URL = 'connection string here'
+require('dotenv').config(); // Load process.env variables
+
+const MONGO_URL = process.env.MONGO_URL
 
 mongoose.connection.once('open', () => { // Event emitter (.once will only be triggered once when the code is executed)
     console.log('Connected to database!')
