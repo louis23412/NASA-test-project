@@ -5,7 +5,7 @@ const planets = require('./planets.mongo');
 
 const DEFAULT_FLIGHT_NUMBER = 100;
 
-const SPACEX_API_URL = 'https://api.spacexdata.com/v4/launches/query'
+const SPACEX_API_URL = 'https://api.spacexdata.com/v4/launches/query';
 
 async function populateLaunches() {
     console.log('Downloading launch data...')
@@ -96,11 +96,12 @@ async function getLatestFlightNumber() {
     return latestLaunch.flightNumber
 }
 
-async function getAllLaunches() {
-    return await launchesDatabase.find({}, {
-        _id : 0,
-        __v : 0
-    })
+async function getAllLaunches(skip, limit) {
+    return await launchesDatabase
+    .find({}, {_id : 0, __v : 0})
+    .sort({ flightNumber : 1 }) // -1 for descending order, 1 for ascending order
+    .skip(skip)
+    .limit(limit);
 }
 
 async function saveLaunch(launch) {
