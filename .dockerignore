@@ -1,0 +1,6 @@
+.git
+
+*/node_modules 
+# Ignores node modules in all folders
+
+server/public
